@@ -69,19 +69,10 @@ typedef void (^DFAlertActionHandler) (DFAlertAction *action);
  After creating the alert controller, configure any actions that you want the user to be able to perform by calling the `addAction:` method one or more times. You may also configure one or more text fields to display in addition to the actions.
 
  @param title The title of the alert.
- @param message Descriptive text that provides additional details about the reason for the alert. Message can only be a NSString object or NSAttributedString object.
+ @param message Additional details about the reason for the alert, can be a string, image or any other object.
  @return An initialized alert controller object.
  */
 + (instancetype)alertControllerWithTitle:(nullable NSString *)title message:(nullable id)message;
-
-/**
- Create and return a alert controller using given title and image.
-
- @param title The title of the alert.
- @param image The image to be display.
- @return An initialized alert controller object.
- */
-+ (instancetype)alertControllerWithTitle:(nullable NSString *)title image:(nullable UIImage *)image;
 - (instancetype)init NS_UNAVAILABLE;
 
 /**

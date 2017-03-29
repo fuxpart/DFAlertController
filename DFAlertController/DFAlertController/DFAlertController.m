@@ -544,38 +544,39 @@ static NSMutableArray *__holder__;  //hold the alerts to avoid release.
 }
 
 + (instancetype)alertControllerWithTitle:(NSString *)title message:(id)message {
-    NSAssert(!message || [message isKindOfClass:[NSString class]] || [message isKindOfClass:[NSAttributedString class]], @"Parameter `message` MUST be member of class `NSString` or `NSAttributedString`");
     NSAttributedString *attributedMessage;
-    if ([message isKindOfClass:[NSString class]]) {
+    if (!message || [message isKindOfClass:[NSAttributedString class]]) {
+        attributedMessage = message;
+    } else if ([message isKindOfClass:[UIImage class]]) {
+        UIImage *image = (UIImage *)message;
+        //We use NSAttributedString to display the image but not UIImageView.
+        NSTextAttachment *attachment = [[NSTextAttachment alloc]init];
+        attachment.image = image;
+        CGFloat factor = 1;
+        if (image.size.width > (ALERT_WIDTH - 2 * MARGIN)) {
+            factor = (ALERT_WIDTH - 2 * MARGIN) / image.size.width;
+        }
+        attachment.bounds = CGRectMake(0, 0, image.size.width * factor, image.size.height * factor);
+        NSMutableAttributedString *mutableMessage = [[NSMutableAttributedString alloc]init];
+        [mutableMessage appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
+        NSMutableParagraphStyle *ps = [[NSMutableParagraphStyle alloc]init];
+        ps.alignment = NSTextAlignmentCenter;   //center
+        [mutableMessage addAttribute:NSParagraphStyleAttributeName value:ps range:NSMakeRange(0, attributedMessage.length)];
+        attributedMessage = mutableMessage;
+    } else {
+        NSString *plainMessage;
+        if ([message isKindOfClass:[NSString class]]) {
+            plainMessage = message;
+        } else {
+            plainMessage = [message description];
+        }
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
         paragraphStyle.alignment = NSTextAlignmentCenter;
         attributedMessage = [[NSAttributedString alloc]initWithString:message
                                                            attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:18],
                                                                         NSForegroundColorAttributeName : [UIColor colorWithWhite:0.6 alpha:1],
                                                                         NSParagraphStyleAttributeName : paragraphStyle}];
-    } else {
-        attributedMessage = message;
     }
-    return [[[self class] alloc] initWithTitle:title message:attributedMessage];
-}
-
-+ (instancetype)alertControllerWithTitle:(NSString *)title image:(UIImage *)image {
-    if (!image) {
-        return [[[self class] alloc] initWithTitle:title message:nil];
-    }
-    //We use NSAttributedString to display the image but not UIImageView.
-    NSTextAttachment *attachment = [[NSTextAttachment alloc]init];
-    attachment.image = image;
-    CGFloat factor = 1;
-    if (image.size.width > ALERT_WIDTH) {
-        factor = ALERT_WIDTH / image.size.width;
-    }
-    attachment.bounds = CGRectMake(0, 0, image.size.width * factor, image.size.height * factor);
-    NSMutableAttributedString *attributedMessage = [[NSMutableAttributedString alloc]init];
-    [attributedMessage appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
-    NSMutableParagraphStyle *ps = [[NSMutableParagraphStyle alloc]init];
-    ps.alignment = NSTextAlignmentCenter;   //center
-    [attributedMessage addAttribute:NSParagraphStyleAttributeName value:ps range:NSMakeRange(0, attributedMessage.length)];
     return [[[self class] alloc] initWithTitle:title message:attributedMessage];
 }
 
