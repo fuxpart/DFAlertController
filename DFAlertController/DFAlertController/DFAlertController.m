@@ -567,6 +567,8 @@ static NSMutableArray *__holder__;  //hold the alerts to avoid release.
         NSString *plainMessage;
         if ([message isKindOfClass:[NSString class]]) {
             plainMessage = message;
+        } else if ([message isKindOfClass:[NSError class]]) {
+            plainMessage = [message localizedDescription];
         } else {
             plainMessage = [message description];
         }
