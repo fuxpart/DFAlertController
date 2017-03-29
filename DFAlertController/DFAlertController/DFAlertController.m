@@ -51,6 +51,7 @@
     CGFloat _keyboardY;
     BOOL _keyboardWillShow;
 @public
+    UIView *_alphaView;
     DFAlertInnerView *_innerView;
     BOOL _touchToEnding;
 }
@@ -397,6 +398,9 @@ typedef NS_OPTIONS(NSInteger, DFAlertActionButtonBoardLineStyle) {
 - (instancetype)initWithTitle:(NSString *)title message:(nullable NSAttributedString *)message {
     self = [super init];
     if (self) {
+        _alphaView = [[UIView alloc]init];
+        _alphaView.backgroundColor = [UIColor colorWithWhite:0.3 alpha:0.3];
+        _alphaView.translatesAutoresizingMaskIntoConstraints = NO;
         _innerView = [[DFAlertInnerView alloc]initWithTitle:title message:message];
     }
     return self;
@@ -405,7 +409,20 @@ typedef NS_OPTIONS(NSInteger, DFAlertActionButtonBoardLineStyle) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
-    self.view.backgroundColor = [UIColor colorWithWhite:0.3 alpha:0.3];
+    self.view.backgroundColor = [UIColor clearColor];
+    
+    [self.view addSubview:_alphaView];
+    NSArray *hc = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_alphaView]|"
+                                                          options:0
+                                                          metrics:nil
+                                                            views:NSDictionaryOfVariableBindings(_alphaView)];
+    NSArray *vc = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_alphaView]|"
+                                                          options:0
+                                                          metrics:nil
+                                                            views:NSDictionaryOfVariableBindings(_alphaView)];
+    [NSLayoutConstraint activateConstraints:hc];
+    [NSLayoutConstraint activateConstraints:vc];
+    
     [self.view addSubview:_innerView];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
@@ -653,9 +670,9 @@ static NSMutableArray *__holder__;  //hold the alerts to avoid release.
 
 - (void)showAlert {
     _window.hidden = NO;
-    _viewController.view.alpha = 0;
+    _viewController->_alphaView.alpha = 0;
     [UIView animateWithDuration:0.25 animations:^{
-        _viewController.view.alpha = 1;
+        _viewController->_alphaView.alpha = 1;
     }];
     _viewController->_innerView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0, 0);
     [UIView animateWithDuration:0.25 delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:25 options:UIViewAnimationOptionCurveEaseOut animations:^{
@@ -665,7 +682,8 @@ static NSMutableArray *__holder__;  //hold the alerts to avoid release.
 
 - (void)dismiss {
     [UIView animateWithDuration:0.25 animations:^{
-        _viewController.view.alpha = 0;
+        _viewController->_alphaView.alpha = 0;
+        _viewController->_innerView.alpha = 0;
     } completion:^(BOOL finished) {
         _window.hidden = YES;
         _window = nil;
