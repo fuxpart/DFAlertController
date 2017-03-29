@@ -574,7 +574,7 @@ static NSMutableArray *__holder__;  //hold the alerts to avoid release.
         }
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
         paragraphStyle.alignment = NSTextAlignmentCenter;
-        attributedMessage = [[NSAttributedString alloc]initWithString:message
+        attributedMessage = [[NSAttributedString alloc]initWithString:plainMessage
                                                            attributes:@{NSFontAttributeName : [UIFont systemFontOfSize:18],
                                                                         NSForegroundColorAttributeName : [UIColor colorWithWhite:0.6 alpha:1],
                                                                         NSParagraphStyleAttributeName : paragraphStyle}];
