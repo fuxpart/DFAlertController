@@ -289,7 +289,7 @@ typedef NS_OPTIONS(NSInteger, DFAlertActionButtonBoardLineStyle) {
         DFAlertActionButton *right = _buttons[1];
         CGFloat width1 = ceil([[left titleForState:UIControlStateNormal] sizeWithAttributes:@{NSFontAttributeName : left.titleLabel.font}].width);
         CGFloat width2 = ceil([[right titleForState:UIControlStateNormal] sizeWithAttributes:@{NSFontAttributeName : right.titleLabel.font}].width);
-        if (width1 > ALERT_WIDTH / 2 || width2 > ALERT_WIDTH) { //one of the buttons is too wide
+        if (width1 > ALERT_WIDTH / 2 || width2 > ALERT_WIDTH / 2) { //one of the buttons is too wide
             goto vertical;
         }
         left.boardLineStyle = DFAlertActionButtonBoardLineStyleTop;
